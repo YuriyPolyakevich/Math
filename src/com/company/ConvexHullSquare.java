@@ -21,10 +21,10 @@ public class ConvexHullSquare implements Task {
             return String.format("Wrong numberOfPoints x: %s, y: %s", numberOfPoints, y.length);
         }
         List<Point> points = new ArrayList<Point>();
-        points.add(new Point(x[0], y[0], 0));
+        points.add(new Point(x[0], y[0]));
         //finding most left point
         for (int i = 1; i < numberOfPoints; i++) {
-            final Point e = new Point(x[i], y[i], i);
+            final Point e = new Point(x[i], y[i]);
             if (points.get(0).x > x[i] || (points.get(0).x == x[i] && points.get(0).y < y[i])) {
                 Point point = points.get(0);
                 points.set(0, e);
@@ -92,12 +92,10 @@ public class ConvexHullSquare implements Task {
     public static class Point {
         int x;
         int y;
-        int index;
 
-        Point(int x, int y, int index) {
+        Point(int x, int y) {
             this.x = x;
             this.y = y;
-            this.index = index;
         }
 
         @Override
