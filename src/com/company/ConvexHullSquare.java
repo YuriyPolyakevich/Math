@@ -34,31 +34,40 @@ public class ConvexHullSquare implements Task {
             }
         }
         Point currentPoint = points.get(0);
-        points.remove(0);
+        final Point startPoint = points.get(0);
         final List<Point> orderedPoints = new ArrayList<Point>();
         orderedPoints.add(currentPoint);
         do {
-            Point nextPoint = points.get(0);
-            for (int i = 1; i < points.size(); i++) {
-                final Point checkPoint = points.get(i);
-                int cross = crossProduct(checkPoint.x - currentPoint.x,
-                        nextPoint.x - currentPoint.x,
-                        checkPoint.y - currentPoint.y,
-                        nextPoint.y - currentPoint.y);
+            Point nextResultPoint = points.stream().filter(p -> !orderedPoints.contains(p)).findAny().orElse(null);
+            if (nextResultPoint == null) {
+                break;
+            }
+            for (final Point toCheckPoint : points) {
+                if (toCheckPoint == nextResultPoint
+                        || toCheckPoint == currentPoint
+                        || (orderedPoints.contains(toCheckPoint) && toCheckPoint != startPoint)) {
+                    continue;
+                }
+                int cross = crossProduct(toCheckPoint.x - currentPoint.x,
+                        nextResultPoint.x - currentPoint.x,
+                        toCheckPoint.y - currentPoint.y,
+                        nextResultPoint.y - currentPoint.y);
                 if (cross < 0) {
-                    nextPoint = checkPoint;
+                    nextResultPoint = toCheckPoint;
                 } else if (cross == 0) {
-                    double dist = pointDistance(nextPoint, currentPoint);
-                    double dist1 = pointDistance(checkPoint, currentPoint);
+                    double dist = pointDistance(nextResultPoint, currentPoint);
+                    double dist1 = pointDistance(toCheckPoint, currentPoint);
                     if (dist1 < dist) {
-                        nextPoint = checkPoint;
+                        nextResultPoint = toCheckPoint;
                     }
                 }
             }
-            currentPoint = nextPoint;
+            currentPoint = nextResultPoint;
+            if (currentPoint == startPoint) {
+                break;
+            }
             orderedPoints.add(currentPoint);
-            points.remove(currentPoint);
-        } while (orderedPoints.size() != numberOfPoints);
+        } while (true);
         return square(orderedPoints);
     }
 
