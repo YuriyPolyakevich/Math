@@ -6,15 +6,15 @@ public class Main {
 
 
     public static void main(String[] args) {
-        runTask1();
-//        runTask2();
+//        runTask1();
+        runTask2();
     }
 
     private static void runTask2() {
         final Task task2 = new PointInSegmentAmount();
         int x1[] = {2, 4, -1, 6, 2, 2, 4, 4};
         int x2[] = {5, 8, 3, 8, 4, 3, 10, 11};
-        int q[] = {5};
+        double q[] = {5, 2, 4};
         task2.solveTask(x1, x2, q);
     }
 
