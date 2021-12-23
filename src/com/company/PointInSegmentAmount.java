@@ -63,13 +63,22 @@ public class PointInSegmentAmount implements Task {
             return result;
         }
         final List<Integer> indexesToCheck = new ArrayList<>();
-        while (i != max) {
+        while (i <= max) {
+            if (qIndex < q.length && (q[qIndex] < i && q[qIndex] > (i - 1))) {
+                final long count = Arrays.stream(exist).filter(e -> e == 1).count();
+                while (qIndex < q.length && (q[qIndex] < i && q[qIndex] > (i - 1))) {
+                    result[qIndex] = (int) count;
+                    qIndex++;
+                }
+            }
+
             while (xIndex < x.length && x[xIndex] == i) {
                 exist[xIndex] = 1;
                 indexesToCheck.add(xIndex);
                 xIndex++;
             }
-            if (qIndex < q.length && (q[qIndex] <= i && q[qIndex] > (i - 1))) {
+
+            if (qIndex < q.length && (q[qIndex] == i)) {
                 final long count = Arrays.stream(exist).filter(e -> e == 1).count();
                 while (qIndex < q.length && (q[qIndex] <= i && q[qIndex] > (i - 1))) {
                     result[qIndex] = (int) count;
@@ -77,8 +86,6 @@ public class PointInSegmentAmount implements Task {
                 }
             }
 
-
-            int size = indexesToCheck.size();
             for (int j = 0; j < indexesToCheck.size(); j++) {
                 final Integer integer = indexesToCheck.get(j);
                 if (y[integer] == i) {
@@ -87,17 +94,9 @@ public class PointInSegmentAmount implements Task {
                     j--;
                 }
             }
-
-            if (size < indexesToCheck.size() && qIndex < q.length && (q[qIndex] > i && q[qIndex] < (i + 1))) {
-                final long count = Arrays.stream(exist).filter(e -> e == 1).count();
-                while (qIndex < q.length && (q[qIndex] > i && q[qIndex] < (i + 1))) {
-                    result[qIndex] = (int) count;
-                    qIndex++;
-                }
-            }
             i++;
         }
-        if (qIndex != result.length - 1) {
+        if (qIndex != result.length) {
             for (int j = qIndex; j < result.length; j++) {
                 result[j] = 0;
             }
