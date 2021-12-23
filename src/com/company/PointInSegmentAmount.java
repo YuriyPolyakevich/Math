@@ -4,6 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/** на оси ох заданы отрезки.
+  * x1[] - левые концы, x2[] - правые концы - arrays of ints.
+  * потом идут запросы - каждый запрос - одна точка на ох (double). нужно ответить во сколько отрезков она входит.
+  * входной файл
+  * N, M — кол-во отрезков, кол-во запросов
+  * x1_0, ... x1_N
+  * x2_0, ... x2_N
+  * q_x_1
+  * q_x_2
+  * ...
+  * q_x_M
+ */
 public class PointInSegmentAmount implements Task {
     @Override
     public Object solveTask(Object... args) {
