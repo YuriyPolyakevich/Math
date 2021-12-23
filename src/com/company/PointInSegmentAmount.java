@@ -75,7 +75,7 @@ public class PointInSegmentAmount implements Task {
                 }
             }
 
-            if (qIndex < q.length && (q[qIndex] >= i && q[qIndex] < (i + 1))) {
+            if (qIndex < q.length && (q[qIndex] > i && q[qIndex] < (i + 1))) {
                 final long count = Arrays.stream(exist).filter(e -> e == 1).count();
                 while (qIndex < q.length && (q[qIndex] >= i && q[qIndex] < (i + 1))) {
                     result[qIndex] = (int) count;
