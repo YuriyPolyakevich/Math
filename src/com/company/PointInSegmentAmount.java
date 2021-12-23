@@ -69,15 +69,16 @@ public class PointInSegmentAmount implements Task {
                 indexesToCheck.add(xIndex);
                 xIndex++;
             }
-            if (qIndex < q.length && q[qIndex] == i) {
+            if (qIndex < q.length && (q[qIndex] <= i && q[qIndex] > (i - 1))) {
                 final long count = Arrays.stream(exist).filter(e -> e == 1).count();
-                while (qIndex < q.length && q[qIndex] == i) {
+                while (qIndex < q.length && (q[qIndex] <= i && q[qIndex] > (i - 1))) {
                     result[qIndex] = (int) count;
                     qIndex++;
                 }
             }
 
 
+            int size = indexesToCheck.size();
             for (int j = 0; j < indexesToCheck.size(); j++) {
                 final Integer integer = indexesToCheck.get(j);
                 if (y[integer] == i) {
@@ -87,7 +88,7 @@ public class PointInSegmentAmount implements Task {
                 }
             }
 
-            if (qIndex < q.length && (q[qIndex] > i && q[qIndex] < (i + 1))) {
+            if (size < indexesToCheck.size() && qIndex < q.length && (q[qIndex] > i && q[qIndex] < (i + 1))) {
                 final long count = Arrays.stream(exist).filter(e -> e == 1).count();
                 while (qIndex < q.length && (q[qIndex] > i && q[qIndex] < (i + 1))) {
                     result[qIndex] = (int) count;
