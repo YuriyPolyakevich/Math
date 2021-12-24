@@ -12,8 +12,8 @@ public class Main {
 
     private static void runTask2() {
         final Task task2 = new PointInSegmentAmount();
-        int x1[] = {2, 4, -1, 6, 2, 2, 4, 4};
-        int x2[] = {5, 8, 3, 8, 4, 3, 10, 11};
+        Integer x1[] = {2, 4, -1, 3};
+        Integer x2[] = {5, 8, 0, 5};
         double q[] = {5, 2, 4};
         task2.solveTask(x1, x2, q);
     }
