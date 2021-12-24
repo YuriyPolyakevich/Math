@@ -37,59 +37,77 @@ public class PointInSegmentAmount implements Task {
         int max = Collections.max(Arrays.asList(y));
         final List<Integer> indexesToCheck = new ArrayList<>();
         final List<SmallSegment> smallSegments = new ArrayList<>();
-        int currentState = 0;
-        int previousState = currentState;
+        int allPossible = 0;
+        int goneValue = 0;
         boolean changed = false;
         for (int j = i; j <= max; j++) {
             changed = false;
+            int comeValue = 0;
             while (currentIndex < x.length && x[indexes[currentIndex]] == j) {
                 if (!indexesToCheck.contains(indexes[currentIndex])) {
                     indexesToCheck.add(indexes[currentIndex]);
                 }
-                currentState++;
+                allPossible++;
                 currentIndex++;
+                comeValue++;
                 changed = true;
             }
 
-            if (changed) {
-                updateList(smallSegments, previousState, currentState, j);
-            }
-            changed = false;
-            previousState = currentState;
             for (int k = 0; k < indexesToCheck.size(); k++) {
                 Integer index = indexesToCheck.get(k);
                 if (y[index] == j) {
                     changed = true;
-                    currentState--;
+                    goneValue++;
                     indexesToCheck.remove(index);
                     k--;
                 }
             }
             if (changed) {
-                updateList(smallSegments, previousState, currentState, j);
+                updateList(smallSegments, allPossible - comeValue, allPossible, j);
             }
+            allPossible -= goneValue;
+            goneValue = 0;
         }
         smallSegments.forEach(System.out::println);
+        search(q, result, smallSegments);
         for (int j = 0; j < result.length; j++) {
-            System.out.println(String.format("Point: {%s}, amount: {%s}", q[j], result[j]));
+            System.out.printf("Point: {%s}, amount: {%s}%n", q[j], result[j]);
         }
         return result;
     }
 
-    private void updateList(List<SmallSegment> smallSegments, int previousState, int currentState, int pointValue) {
+    private void search(double[] q, int[] result, List<SmallSegment> smallSegments) {
+        final Integer[] objects = smallSegments.stream().map(s -> s.from).toArray(Integer[]::new);
+        for (int j = 0; j < q.length; j++) {
+            int i1 = Arrays.binarySearch(objects, (int) q[j]);
+            if (i1 < 0) {
+                i1 = -i1 - 2;
+            }
+            final SmallSegment smallSegment = smallSegments.get(i1);
+            if (smallSegment.from == q[j]) {
+                result[j] = smallSegment.startAmount;
+            } else if (smallSegment.from < q[j] && q[j] < smallSegment.to) {
+                result[j] = smallSegment.betweenAmount;
+            } else {
+                result[j] = smallSegment.endAmount;
+            }
+        }
+    }
+
+    private void updateList(List<SmallSegment> smallSegments, int afterGone, int allPossible, int pointValue) {
         if (smallSegments.size() == 0) {
             final SmallSegment e = new SmallSegment(pointValue, null);
-            e.startAmount = currentState;
+            e.startAmount = allPossible;
             smallSegments.add(e);
             return;
         }
         final SmallSegment smallSegment = smallSegments.get(smallSegments.size() - 1);
         smallSegment.to = pointValue;
-        smallSegment.betweenAmount = previousState;
-        smallSegment.endAmount = currentState;
+        smallSegment.betweenAmount = afterGone;
+        smallSegment.endAmount = allPossible;
         smallSegments.set(smallSegments.size() - 1, smallSegment);
         final SmallSegment e = new SmallSegment(pointValue, null);
-        e.startAmount = currentState;
+        e.startAmount = allPossible;
         smallSegments.add(e);
     }
 
