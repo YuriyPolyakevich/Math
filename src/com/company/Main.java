@@ -7,7 +7,8 @@ public class Main {
 
     public static void main(String[] args) {
 //        runTask1();
-        runTask2();
+//        runTask2();
+//        runTask3();
     }
 
     private static void runTask2() {
