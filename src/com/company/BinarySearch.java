@@ -25,6 +25,26 @@ public class BinarySearch {
         return -rightIndex - 2;
     }
 
+    public int findMinValueInShiftedSortedList(int[] a) {
+        int leftIndex = 0;
+        int rightIndex = a.length - 1;
+        int foundIndex = -1;
+        while (leftIndex <= rightIndex) {
+            foundIndex = (leftIndex + rightIndex) / 2;
+            if ((foundIndex == 0 && a[foundIndex] <= a[foundIndex + 1]) || (foundIndex == a.length - 1 && a[foundIndex - 1] >= a[foundIndex])) {
+                return a[foundIndex];
+            } else if (a[foundIndex] <= a[foundIndex + 1] && a[foundIndex] <= a[foundIndex - 1]) {
+                return a[foundIndex];
+            }
+            if (a[rightIndex] >= a[foundIndex]) {
+                rightIndex = foundIndex - 1;
+            } else {
+                leftIndex = foundIndex + 1;
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+
     public boolean isValueExist(int[] a, int searchValue) {
         return simpleBinarySearch(a, searchValue) >= 0;
     }
