@@ -8,7 +8,10 @@ public class Main {
     public static void main(String[] args) {
 //        runTask1();
 //        runTask2();
-//        runTask3();
+        int x2[] = {-3, 7, 20, 35, 45, 46};
+        BinarySearch search = new BinarySearch();
+        final int x = search.simpleBinarySearch(x2, 45);
+        System.out.println("Index: " + x);
     }
 
     private static void runTask2() {

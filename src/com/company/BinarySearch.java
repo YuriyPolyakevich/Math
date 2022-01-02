@@ -12,18 +12,17 @@ public class BinarySearch {
         int leftIndex = 0;
         int rightIndex = a.length - 1;
         int foundIndex = -1;
-        while (leftIndex < rightIndex) {
+        while (leftIndex <= rightIndex) {
             foundIndex = (leftIndex + rightIndex) / 2;
             if (a[foundIndex] == searchValue) {
                 return foundIndex;
             } else if (searchValue > a[foundIndex]) {
                 leftIndex = foundIndex + 1;
             } else {
-                rightIndex = foundIndex;
+                rightIndex = foundIndex - 1;
             }
         }
-        System.out.println("LeftIndex: " + leftIndex + " RightIndex: " + rightIndex);
-        return -rightIndex - 1;
+        return -rightIndex - 2;
     }
 
     public boolean isValueExist(int[] a, int searchValue) {
