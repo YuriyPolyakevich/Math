@@ -35,9 +35,34 @@ public class BinarySearch {
         int leftIndex = 0;
         int rightIndex = a.length - 1;
         int foundIndex = -1;
-        boolean rightSideChecked = false;
-        while (true) {
-            break;
+        while (leftIndex <= rightIndex) {
+            foundIndex = (leftIndex + rightIndex) / 2;
+
+            //processing border values
+            if (foundIndex == 0) {
+                if (a[foundIndex + 1] <= a[foundIndex]) {
+                    return foundIndex;
+                } else {
+                    leftIndex += 1;
+                    continue;
+                }
+            } else if (foundIndex == a.length - 1) {
+                if (a[foundIndex - 1] <= a[foundIndex]) {
+                    return foundIndex;
+                } else {
+                    rightIndex -= 1;
+                    continue;
+                }
+            }
+
+            if (a[foundIndex - 1] <= a[foundIndex] && a[foundIndex + 1] <= a[foundIndex]) {
+                return foundIndex;
+            }
+            if (a[foundIndex + 1] >= a[foundIndex]) {
+                leftIndex = foundIndex + 1;
+            } else {
+                rightIndex = foundIndex - 1;
+            }
         }
 
         return foundIndex;

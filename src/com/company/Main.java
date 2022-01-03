@@ -8,10 +8,10 @@ public class Main {
     public static void main(String[] args) {
 //        runTask1();
 //        runTask2();
-        int x2[] = {46};
+        int x2[] = {4, 6, -1};
         BinarySearch search = new BinarySearch();
-        final int x = search.findMinValueInShiftedSortedList(x2);
-        System.out.println("Min value: " + x);
+        final int x = search.findPeek(x2);
+        System.out.println("peek value: " + x2[x] + " index: " + x);
     }
 
     private static void runTask2() {
