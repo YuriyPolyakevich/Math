@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
 //        runTask1();
 //        runTask2();
-        int x2[] = {46, 47, 48, 49, -1, 2};
+        int x2[] = {46, 47, 48, -49, -43, -41};
         BinarySearch search = new BinarySearch();
         final int x = search.findMinValueInShiftedSortedList(x2);
         System.out.println("Min value: " + x);

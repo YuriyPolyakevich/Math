@@ -29,11 +29,10 @@ public class BinarySearch {
         int leftIndex = 0;
         int rightIndex = a.length - 1;
         int foundIndex = -1;
+        int minValue = Integer.MAX_VALUE;
         while (leftIndex <= rightIndex) {
             foundIndex = (leftIndex + rightIndex) / 2;
             if ((foundIndex == 0 && a[foundIndex] <= a[foundIndex + 1]) || (foundIndex == a.length - 1 && a[foundIndex - 1] >= a[foundIndex])) {
-                return a[foundIndex];
-            } else if (a[foundIndex] <= a[foundIndex + 1] && a[foundIndex] <= a[foundIndex - 1]) {
                 return a[foundIndex];
             }
             if (a[rightIndex] >= a[foundIndex]) {
@@ -41,8 +40,11 @@ public class BinarySearch {
             } else {
                 leftIndex = foundIndex + 1;
             }
+            if (a[foundIndex] < minValue) {
+                minValue = a[foundIndex];
+            }
         }
-        return Integer.MIN_VALUE;
+        return minValue;
     }
 
     public boolean isValueExist(int[] a, int searchValue) {
