@@ -32,9 +32,6 @@ public class BinarySearch {
         int minValue = Integer.MAX_VALUE;
         while (leftIndex <= rightIndex) {
             foundIndex = (leftIndex + rightIndex) / 2;
-            if ((foundIndex == 0 && a[foundIndex] <= a[foundIndex + 1]) || (foundIndex == a.length - 1 && a[foundIndex - 1] >= a[foundIndex])) {
-                return a[foundIndex];
-            }
             if (a[rightIndex] >= a[foundIndex]) {
                 rightIndex = foundIndex - 1;
             } else {
