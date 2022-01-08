@@ -24,10 +24,186 @@ public class BinarySearch {
         return -rightIndex - 2;
     }
 
+    //Найти медиану двух отсортированных списков. В списках могут быть дубликаты.
+    //Если количество элементов четное, то нужно взять среднее арифметическое двух серединных значений.
+    //Гарантируется, что хоты бы один список не пустой.
+    public double findMedian(int[] a, int[] b) {
+        int totalElementCount = a.length + b.length;
+        boolean isEvenNumberOfElements = totalElementCount % 2 == 0;
+        //condition if one of arrays is empty
+        if (a.length == 0) {
+            return isEvenNumberOfElements
+                    ? (b.length == 1 ? b[0] : ((double) b[b.length / 2] + b[b.length / 2 - 1]) / 2)
+                    : b[b.length / 2];
+        } else if (b.length == 0) {
+            return isEvenNumberOfElements
+                    ? (a.length == 1 ? a[0] : ((double) a[a.length / 2] + a[a.length / 2 - 1]) / 2)
+                    : a[a.length / 2];
+        }
+        int indexToFound = totalElementCount / 2;
+        int additionalIdnexToFoundIfEvenTotalAmount = isEvenNumberOfElements ? (totalElementCount / 2) - 1 : Integer.MIN_VALUE;
+        int rightA_Array = a.length - 1;
+        int rightB_Array = b.length - 1;
+        int leftB_Array = 0;
+        int leftA_Array = 0;
+        int currentIndex = 0;
+        boolean checkA_Array = rightA_Array >= rightB_Array;
+
+        //Final results
+        int answer = Integer.MIN_VALUE;
+        int answerIfElementHasEvenAmountOfNumbers = Integer.MIN_VALUE;
+
+        while (currentIndex != indexToFound || currentIndex != additionalIdnexToFoundIfEvenTotalAmount) {
+            currentIndex = checkA_Array ? (leftA_Array + rightA_Array) / 2 : (leftB_Array + rightB_Array) / 2;
+            int elementInArrayOnCurrentIndex = checkA_Array ? a[currentIndex] : b[currentIndex];
+            //get index of element if we put it in another array
+            int indexOfElementInAnotherArray = checkA_Array ? simpleBinarySearch(b, elementInArrayOnCurrentIndex) : simpleBinarySearch(a, elementInArrayOnCurrentIndex);
+
+            //piece of code to process duplicates
+            int lastIndexOfElementInCurrentArray = -1;
+            int firstIndexOfElementInCurrentArray = -1;
+
+            int differenceWithSecondArrayLastIndexOfElement = 0;
+            int differenceWithSecondArrayFirstIndexOfElement = 0;
+
+            if (indexOfElementInAnotherArray < 0) {
+                indexOfElementInAnotherArray = Math.abs(indexOfElementInAnotherArray) - 1;
+            } else {
+                //if index >=0 then it means that we have same values in another array, so we have to process it.....
+                final int lastIndexOfElementInSecondArray = findBorderValue(checkA_Array ? b : a, elementInArrayOnCurrentIndex, true);
+                final int firstIndexOfElementInSecondArray = findBorderValue(checkA_Array ? b : a, elementInArrayOnCurrentIndex, false);
+
+                differenceWithSecondArrayLastIndexOfElement = (lastIndexOfElementInSecondArray + 1) - indexOfElementInAnotherArray;
+                differenceWithSecondArrayFirstIndexOfElement = indexOfElementInAnotherArray - firstIndexOfElementInSecondArray;
+            }
+
+            //find duplicates in current array
+            if (checkA_Array) {
+                if (a.length > 1 && currentIndex < a.length - 1) {
+                    if (currentIndex < a.length - 1  && a[currentIndex] == a[currentIndex + 1]) {
+                        lastIndexOfElementInCurrentArray = findBorderValue(a, elementInArrayOnCurrentIndex, true);
+                    }
+                    if (currentIndex > 0 && a[currentIndex] == a[currentIndex - 1]) {
+                        firstIndexOfElementInCurrentArray = findBorderValue(a, elementInArrayOnCurrentIndex, false);
+                    }
+                }
+            } else {
+                if (b.length > 1) {
+                    if (currentIndex < b.length - 1 && b[currentIndex] == b[currentIndex + 1]) {
+                        lastIndexOfElementInCurrentArray = findBorderValue(b, elementInArrayOnCurrentIndex, true);
+                    }
+                    if (currentIndex > 0 && b[currentIndex] == b[currentIndex - 1]) {
+                        firstIndexOfElementInCurrentArray = findBorderValue(b, elementInArrayOnCurrentIndex, false);
+                    }
+                }
+            }
+
+            //getting range of indexes in "result" array of current value
+            int differenceWithCurrentArrayFirstIndexOfElement = firstIndexOfElementInCurrentArray == -1 ? 0 : currentIndex - firstIndexOfElementInCurrentArray;
+            int differenceWithCurrentArrayLastIndexOfElement = lastIndexOfElementInCurrentArray == -1 ? 0 : lastIndexOfElementInCurrentArray - currentIndex;
+
+
+            int indexInCombinedArray = indexOfElementInAnotherArray + currentIndex;
+
+            int leftBorder = indexInCombinedArray - differenceWithCurrentArrayFirstIndexOfElement - differenceWithSecondArrayFirstIndexOfElement;
+            int rightBorder = indexInCombinedArray + differenceWithCurrentArrayLastIndexOfElement + differenceWithSecondArrayLastIndexOfElement;
+
+            //check if we found an answer; if number of elements is even, continue searching
+            if ((leftBorder <= indexToFound && rightBorder >= indexToFound) && indexToFound != Integer.MIN_VALUE) {
+                answer = elementInArrayOnCurrentIndex;
+                //clearing indexToFoundValue to avoid cycle to finish if amount of items is even
+                if (isEvenNumberOfElements) {
+                    //finish searching, cause we've found both elements
+                    if (additionalIdnexToFoundIfEvenTotalAmount == Integer.MIN_VALUE + 1) {
+                        break;
+                    }
+                    indexToFound = Integer.MIN_VALUE;
+                } else {
+                    break;
+                }
+            }
+            //check if we found second element if total is even
+            if (isEvenNumberOfElements && (leftBorder <= additionalIdnexToFoundIfEvenTotalAmount && rightBorder >= additionalIdnexToFoundIfEvenTotalAmount)) {
+                answerIfElementHasEvenAmountOfNumbers = elementInArrayOnCurrentIndex;
+                //finish searching, cause we've found both elements
+                if (indexToFound == Integer.MIN_VALUE) {
+                    break;
+                }
+                //+1 because first init goes with MIN_VALUE
+                additionalIdnexToFoundIfEvenTotalAmount = Integer.MIN_VALUE + 1;
+            }
+
+            //switching arrays if we processed the whole one already
+            if (checkA_Array && leftA_Array >= rightA_Array) {
+                checkA_Array = false;
+                continue;
+            } else if (!checkA_Array && leftB_Array >= rightB_Array) {
+                checkA_Array = true;
+                continue;
+            }
+
+
+            //updating indexes according to which array we are processing and index state (less/more) than we need to find
+            if (indexToFound != Integer.MIN_VALUE) {
+                if (indexInCombinedArray < indexToFound) {
+                    if (checkA_Array) {
+                        leftA_Array = currentIndex + 1;
+                    } else {
+                        leftB_Array = currentIndex + 1;
+                    }
+                } else {
+                    if (checkA_Array) {
+                        rightA_Array = currentIndex - 1;
+                    } else {
+                        rightB_Array = currentIndex - 1;
+                    }
+                }
+            } else if (isEvenNumberOfElements && (additionalIdnexToFoundIfEvenTotalAmount != Integer.MIN_VALUE + 1)) {
+                if (indexInCombinedArray < additionalIdnexToFoundIfEvenTotalAmount) {
+                    if (checkA_Array) {
+                        leftA_Array = currentIndex + 1;
+                    } else {
+                        leftB_Array = currentIndex + 1;
+                    }
+                } else {
+                    if (checkA_Array) {
+                        rightA_Array = currentIndex - 1;
+                    } else {
+                        rightB_Array = currentIndex - 1;
+                    }
+                }
+            }
+
+        }
+
+        return isEvenNumberOfElements ? ((double) answer + answerIfElementHasEvenAmountOfNumbers) / 2 : answer;
+    }
+
+    private int findBorderValue(int[] ints, int searchElement, boolean findLast) {
+        int left = 0;
+        int right = ints.length - 1;
+        int currentIndex = -1;
+        while (left <= right) {
+            currentIndex = (left + right) / 2;
+            int elem = ints[currentIndex];
+            if (elem == searchElement) {
+                if (findLast) {
+                    left = currentIndex + 1;
+                } else {
+                    right = currentIndex - 1;
+                }
+            } else if (elem > searchElement) {
+                right = currentIndex - 1;
+            } else {
+                left = currentIndex + 1;
+            }
+        }
+        return currentIndex;
+    }
+
     //Написать функцию, которая для списка целых чисел возвращает индекс найденного пика
     //(пиков может быть несколько, можно вернуть любой из них).
     //Значение является пиком, если оно больше или равно соседним значениям.
-    //TODO
     public int findPeek(int[] a) {
         if (a.length == 1) {
             return 0;
