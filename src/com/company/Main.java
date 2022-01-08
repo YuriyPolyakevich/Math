@@ -5,9 +5,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        {1, 3, 4, 5, 6, 6, 6, 6}
-        int a[] = {5, 6, 6, 6};
-        int b[] = {1, 3, 4, 6};
+//        {11, 2, 3, 4, 6, 7}
+        int a[] = {1, 4, 6};
+        int b[] = {2, 3, 7};
         BinarySearch search = new BinarySearch();
         final double x = search.findMedian(a, b);
         System.out.println(x);

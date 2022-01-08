@@ -59,7 +59,7 @@ public class BinarySearch {
             //get index of element if we put it in another array
             int indexOfElementInAnotherArray = checkA_Array ? simpleBinarySearch(b, elementInArrayOnCurrentIndex) : simpleBinarySearch(a, elementInArrayOnCurrentIndex);
 
-            //piece of code to process duplicates
+            //vars to process duplicates
             int lastIndexOfElementInCurrentArray = -1;
             int firstIndexOfElementInCurrentArray = -1;
 
@@ -69,7 +69,7 @@ public class BinarySearch {
             if (indexOfElementInAnotherArray < 0) {
                 indexOfElementInAnotherArray = Math.abs(indexOfElementInAnotherArray) - 1;
             } else {
-                //if index >=0 then it means that we have same values in another array, so we have to process it.....
+                //if index >=0 then it means that we have same values in another array, so we have to process it
                 final int lastIndexOfElementInSecondArray = findBorderValue(checkA_Array ? b : a, elementInArrayOnCurrentIndex, true);
                 final int firstIndexOfElementInSecondArray = findBorderValue(checkA_Array ? b : a, elementInArrayOnCurrentIndex, false);
 
@@ -98,17 +98,19 @@ public class BinarySearch {
                 }
             }
 
-            //getting range of indexes in "result" array of current value
+
             int differenceWithCurrentArrayFirstIndexOfElement = firstIndexOfElementInCurrentArray == -1 ? 0 : currentIndex - firstIndexOfElementInCurrentArray;
             int differenceWithCurrentArrayLastIndexOfElement = lastIndexOfElementInCurrentArray == -1 ? 0 : lastIndexOfElementInCurrentArray - currentIndex;
 
-
             int indexInCombinedArray = indexOfElementInAnotherArray + currentIndex;
 
+            //getting borders to process values like range in array that considered to be sorted combination of 2
+            //for example we have {1, 3, 5}; {3, 4, 6} => {1, 3, 3, 4, 5, 6} => leftBorder == 1, right border == 2,
             int leftBorder = indexInCombinedArray - differenceWithCurrentArrayFirstIndexOfElement - differenceWithSecondArrayFirstIndexOfElement;
             int rightBorder = indexInCombinedArray + differenceWithCurrentArrayLastIndexOfElement + differenceWithSecondArrayLastIndexOfElement;
 
-            //check if we found an answer; if number of elements is even, continue searching
+            //check if we found an answer; if number of elements is even, check if it was already set, if so - finish searching
+            //otherwise continue
             if ((leftBorder <= indexToFound && rightBorder >= indexToFound) && indexToFound != Integer.MIN_VALUE) {
                 answer = elementInArrayOnCurrentIndex;
                 //clearing indexToFoundValue to avoid cycle to finish if amount of items is even
@@ -122,14 +124,14 @@ public class BinarySearch {
                     break;
                 }
             }
-            //check if we found second element if total is even
+            //check if we found second element if total amount of elements is even
             if (isEvenNumberOfElements && (leftBorder <= additionalIdnexToFoundIfEvenTotalAmount && rightBorder >= additionalIdnexToFoundIfEvenTotalAmount)) {
                 answerIfElementHasEvenAmountOfNumbers = elementInArrayOnCurrentIndex;
                 //finish searching, cause we've found both elements
                 if (indexToFound == Integer.MIN_VALUE) {
                     break;
                 }
-                //+1 because first init goes with MIN_VALUE
+                //+1 because first initialization goes with MIN_VALUE
                 additionalIdnexToFoundIfEvenTotalAmount = Integer.MIN_VALUE + 1;
             }
 
