@@ -12,7 +12,7 @@ public class BinarySearch {
         int rightIndex = a.length - 1;
         int foundIndex = -1;
         while (leftIndex <= rightIndex) {
-            foundIndex = (leftIndex + rightIndex) / 2;
+            foundIndex = leftIndex + (rightIndex - leftIndex) / 2;
             if (a[foundIndex] == searchValue) {
                 return foundIndex;
             } else if (searchValue > a[foundIndex]) {
@@ -186,7 +186,7 @@ public class BinarySearch {
         int right = ints.length - 1;
         int currentIndex = -1;
         while (left <= right) {
-            currentIndex = (left + right) / 2;
+            currentIndex = left + (right - left) / 2;
             int elem = ints[currentIndex];
             if (elem == searchElement) {
                 if (findLast) {
@@ -214,7 +214,7 @@ public class BinarySearch {
         int rightIndex = a.length - 1;
         int foundIndex = -1;
         while (leftIndex <= rightIndex) {
-            foundIndex = (leftIndex + rightIndex) / 2;
+            foundIndex = leftIndex + (rightIndex - leftIndex) / 2;
 
             //processing border values
             if (foundIndex == 0) {
@@ -254,7 +254,7 @@ public class BinarySearch {
         int foundIndex = -1;
         int minValue = Integer.MAX_VALUE;
         while (leftIndex <= rightIndex) {
-            foundIndex = (leftIndex + rightIndex) / 2;
+            foundIndex = leftIndex + (rightIndex - leftIndex) / 2;
             if (a[rightIndex] >= a[foundIndex]) {
                 rightIndex = foundIndex - 1;
             } else {
