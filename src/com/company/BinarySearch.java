@@ -149,29 +149,29 @@ public class BinarySearch {
             if (indexToFound != Integer.MIN_VALUE) {
                 if (indexInCombinedArray < indexToFound) {
                     if (checkA_Array) {
-                        leftA_Array = currentIndex + 1;
+                        leftA_Array = currentIndex + (differenceWithCurrentArrayLastIndexOfElement + 1);
                     } else {
-                        leftB_Array = currentIndex + 1;
+                        leftB_Array = currentIndex + (differenceWithCurrentArrayLastIndexOfElement + 1);
                     }
                 } else {
                     if (checkA_Array) {
-                        rightA_Array = currentIndex - 1;
+                        rightA_Array = currentIndex - (differenceWithCurrentArrayFirstIndexOfElement + 1);
                     } else {
-                        rightB_Array = currentIndex - 1;
+                        rightB_Array = currentIndex - (differenceWithCurrentArrayFirstIndexOfElement + 1);
                     }
                 }
             } else if (isEvenNumberOfElements && (additionalIdnexToFoundIfEvenTotalAmount != Integer.MIN_VALUE + 1)) {
                 if (indexInCombinedArray < additionalIdnexToFoundIfEvenTotalAmount) {
                     if (checkA_Array) {
-                        leftA_Array = currentIndex + 1;
+                        leftA_Array = currentIndex + (differenceWithCurrentArrayLastIndexOfElement + 1);
                     } else {
-                        leftB_Array = currentIndex + 1;
+                        leftB_Array = currentIndex + (differenceWithCurrentArrayLastIndexOfElement + 1);
                     }
                 } else {
                     if (checkA_Array) {
-                        rightA_Array = currentIndex - 1;
+                        rightA_Array = currentIndex - (differenceWithCurrentArrayFirstIndexOfElement + 1);
                     } else {
-                        rightB_Array = currentIndex - 1;
+                        rightB_Array = currentIndex - (differenceWithCurrentArrayFirstIndexOfElement + 1);
                     }
                 }
             }
