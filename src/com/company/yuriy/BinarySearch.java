@@ -1,4 +1,4 @@
-package com.company;
+package com.company.yuriy;
 
 /**
  * Created by yuriy_polyakevich at 1/2/22

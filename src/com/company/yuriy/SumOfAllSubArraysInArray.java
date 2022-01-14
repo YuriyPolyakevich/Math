@@ -1,4 +1,4 @@
-package com.company;
+package com.company.yuriy;
 
 import java.util.stream.IntStream;
 
