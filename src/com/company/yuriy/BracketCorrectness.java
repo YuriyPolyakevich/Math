@@ -41,7 +41,7 @@ import java.util.Stack;
 public class BracketCorrectness implements Task{
 
     public static void main(String[] args) {
-        final String task = "(())()[]][";
+        final String task = "(())(((";
         Object answer = new BracketCorrectness().solveTask(task);
         System.out.println(answer);
     }
@@ -70,7 +70,7 @@ public class BracketCorrectness implements Task{
                 }
             }
         }
-        return leftStack.size() == 0 ? "CORRECT" : leftStack.size();
+        return leftStack.size() == 0 ? "CORRECT" : size;
     }
 }
 
