@@ -66,7 +66,6 @@ public class BracketCorrectness implements Task{
                 }
                 final Character pop = leftStack.pop();
                 if (leftBrackets.indexOf(pop) != rightBrackets.indexOf(symbol)) {
-                    //-1 cause we popped the symbol
                     return i;
                 }
             }
