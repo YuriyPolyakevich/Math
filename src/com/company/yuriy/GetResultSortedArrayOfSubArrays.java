@@ -1,8 +1,7 @@
 package com.company.yuriy;
 
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by yuriy_polyakevich at 1/30/22
@@ -25,13 +24,18 @@ public class GetResultSortedArrayOfSubArrays implements Task {
 
     @Override
     public Object solveTask(Object... args) {
-        final Queue<Integer> queue = new PriorityQueue<>();
-        for (Object arg : args) {
-            final Integer[] array = (Integer[]) arg;
-            queue.addAll(Arrays.asList(array));
-        }
-        while (!queue.isEmpty()) {
+        final List<Queue<Integer>> queues = Arrays.stream(args)
+                .map(a -> new ArrayDeque<>(Arrays.asList((Integer[]) a)))
+                .collect(Collectors.toList());
+        final int totalCount = queues.stream().map(Collection::size).reduce(Integer::sum).orElse(0);
+        int count = 0;
+        while (count < totalCount) {
+            final Queue<Integer> queue = queues.stream()
+                    .filter(q -> q.size() > 0)
+                    .min(Comparator.comparing(Queue::peek))
+                    .orElseThrow(RuntimeException::new);
             System.out.print(queue.poll() + " ");
+            count++;
         }
         return null;
     }
