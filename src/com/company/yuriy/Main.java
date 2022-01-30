@@ -6,9 +6,10 @@ public class Main {
     public static void main(String[] args) {
 
         final PointInSegmentAmount p = new PointInSegmentAmount();
-        Integer a[] = {1, 2, 3, 4};
-        Integer b[] = {2, 3, 4, 5};
-        double q[] = {1.4, 6};
-        p.solveTask(a, b, q);
+        final BinarySearch binarySearch = new BinarySearch();
+        int a[] = new int[]{3};
+        int b[] = new int[]{1, 4};
+        final double median = binarySearch.findMedian(a, b);
+        System.out.println(median);
     }
 }
