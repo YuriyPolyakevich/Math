@@ -1,7 +1,11 @@
 package com.company.yuriy;
 
+import javax.crypto.spec.PSource;
+import javax.swing.*;
+import java.lang.invoke.CallSite;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by yuriy_polyakevich at 1/30/22
@@ -28,25 +32,34 @@ import java.util.stream.Collectors;
 public class GetResultSortedArrayOfSubArrays implements Task {
 
     public static void main(String[] args) {
-        final Integer a[] = new Integer[]{1, 3, 5, 7, 9};
-        final Integer b[] = new Integer[]{2, 4, 6, 8, 10};
-        new GetResultSortedArrayOfSubArrays().solveTask(a, b);
+        List<Integer[]> arrays = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            Integer ar[] = new Integer[1000];
+            for (int j = 0; j < 1000; j++) {
+                ar[j] = new Random().nextInt();
+            }
+            Arrays.sort(ar);
+            arrays.add(ar);
+        }
+        new GetResultSortedArrayOfSubArrays().solveTask(arrays);
     }
 
     @Override
     public Object solveTask(Object... args) {
-        final List<Queue<Integer>> queues = Arrays.stream(args)
-                .map(a -> new ArrayDeque<>(Arrays.asList((Integer[]) a)))
+        final List<Integer[]> arg = (List<Integer[]>) args[0];
+        final List<Queue<Integer>> queues = arg.stream()
+                .map(a -> new ArrayDeque<>(Arrays.asList(a)))
                 .collect(Collectors.toList());
-        final int totalCount = queues.stream().map(Collection::size).reduce(Integer::sum).orElse(0);
-        int count = 0;
-        while (count < totalCount) {
-            final Queue<Integer> queue = queues.stream()
-                    .filter(q -> q.size() > 0)
-                    .min(Comparator.comparing(Queue::peek))
-                    .orElseThrow(RuntimeException::new);
-            System.out.print(queue.poll() + " ");
-            count++;
+        final Queue<Queue<Integer>> prQ = new PriorityQueue<>(Comparator.comparing(Queue::peek));
+        prQ.addAll(queues);
+        while (!prQ.isEmpty()) {
+            final Queue<Integer> poll = prQ.poll();
+            if (poll != null) {
+                System.out.print(poll.poll() + " ");
+                if (poll.size() != 0) {
+                    prQ.add(poll);
+                }
+            }
         }
         return null;
     }
