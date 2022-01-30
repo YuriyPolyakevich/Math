@@ -27,6 +27,7 @@ public class BinarySearch {
     //Найти медиану двух отсортированных списков. В списках могут быть дубликаты.
     //Если количество элементов четное, то нужно взять среднее арифметическое двух серединных значений.
     //Гарантируется, что хоты бы один список не пустой.
+    //TODO: refactor
     public double findMedian(int[] a, int[] b) {
         int totalElementCount = a.length + b.length;
         boolean isEvenNumberOfElements = totalElementCount % 2 == 0;
