@@ -45,7 +45,7 @@ public class BinarySearch {
         int low = 0;
         int high = n1_len;
         while (low <= high) {
-            final int i = (low + high) / 2;
+            final int i = low + (high - low) / 2;
             final int j = (n1_len + n2_len + 1) / 2 - i;
 
             final float left1 = i > 0 ? a[i - 1] : Float.MIN_VALUE;
