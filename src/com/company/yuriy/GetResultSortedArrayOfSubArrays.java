@@ -47,6 +47,7 @@ public class GetResultSortedArrayOfSubArrays implements Task {
     @Override
     public Object solveTask(Object... args) {
         final List<Integer[]> arg = (List<Integer[]>) args[0];
+        final List<Integer> answer = new LinkedList<>();
         final List<Queue<Integer>> queues = arg.stream()
                 .map(a -> new ArrayDeque<>(Arrays.asList(a)))
                 .collect(Collectors.toList());
@@ -55,12 +56,13 @@ public class GetResultSortedArrayOfSubArrays implements Task {
         while (!prQ.isEmpty()) {
             final Queue<Integer> poll = prQ.poll();
             if (poll != null) {
-                System.out.print(poll.poll() + " ");
+                answer.add(poll.poll());
                 if (poll.size() != 0) {
                     prQ.add(poll);
                 }
             }
         }
+        answer.forEach(a -> System.out.print(a + " "));
         return null;
     }
 }
