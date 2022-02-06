@@ -57,7 +57,7 @@ public class MemoryManager {
     private static long timeSpent = 0;
 
     public static void main(String[] args) {
-        final int n = (int) Math.pow(2, 15);
+        final int n = (int) Math.pow(2, 32);
         final int m = 100_000;
         final int[] input = new int[m];
         int c = 1;
@@ -149,14 +149,15 @@ public class MemoryManager {
                         if (segment.prevSegment != null) {
                             prev = segment.prevSegment;
                             from = prev.isBusy ? segment.from : prev.to;
-                            freeParts.remove(segment.prevSegment);
+                            //TODO: replace removeIf
+                            freeParts.removeIf(se -> se.from == segment.prevSegment.from && se.to == segment.prevSegment.to);
                             e.prevSegment = prev.prevSegment;
                             e.from = from;
                         }
                         if (segment.nextSegment != null) {
                             next = segment.nextSegment;
                             to = next.isBusy ? next.from : next.to;
-                            freeParts.remove(segment.nextSegment);
+                            freeParts.removeIf(se -> se.from == segment.nextSegment.from && se.to == segment.nextSegment.to);
                             e.nextSegment = next.nextSegment;
                             e.to = to;
                         }
