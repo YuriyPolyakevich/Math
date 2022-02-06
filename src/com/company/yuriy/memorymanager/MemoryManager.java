@@ -52,20 +52,25 @@ import java.util.stream.Collectors;
 //выведите номер первой ячейки памяти в выделенном блоке, иначе выведите число -1.
 public class MemoryManager {
 
+    private static long timeSpent = 0;
+
     public static void main(String[] args) {
         final int n = (int) Math.pow(2, 10);
         final int m = 100_000;
         final int[] input = new int[m];
+        int c = 1;
         for (int i = 0; i < m; i++) {
             if (i % 30 == 0 && i != 0) {
-                final int i1 = -new Random().nextInt(i * 30 - ((i - 1) * 30)) - ((i - 1) * 30);
-                input[i] = Math.abs(i1) > 100_000 ? -new Random().nextInt(30) : -i1;
+                final int upepr = c * 30;
+                final int low = (c - 1) * 30;
+                final int i1 = -(new Random().nextInt(upepr - low) + low);
+                input[i] = i1;
+                c++;
             } else
-                input[i] = new Random().nextInt(30);
+                input[i] = new Random().nextInt(29) + 1;
         }
 
         final String solve = solve(n, m, input);
-        System.out.println(solve);
     }
 
     private static String solve(int n, int m, int[] input) {
@@ -98,13 +103,14 @@ public class MemoryManager {
                 final int absoluteValue = Math.abs(query) - 1;
                 if (busyParts[absoluteValue] != null) {
                     busyParts[absoluteValue] = null;
-                    final List<Segment> segmemts = Arrays.stream(busyParts).filter(Objects::nonNull).collect(Collectors.toList());
+                    final List<Segment> segmemts = Arrays.stream(busyParts).filter(Objects::nonNull)
+                            .collect(Collectors.toList());
                     freeParts = new PriorityQueue<>(segmentComparator);
-                    if (segmemts.isEmpty()){
+                    if (segmemts.isEmpty()) {
                         freeParts.add(new Segment(0, n));
                     } else {
                         int start = 0;
-                        for (Segment segment: segmemts) {
+                        for (Segment segment : segmemts) {
                             if (start == segment.from) {
                                 start = segment.to;
                                 continue;
