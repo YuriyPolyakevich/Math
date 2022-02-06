@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -52,45 +53,46 @@ import java.util.stream.Collectors;
 public class MemoryManager {
 
     public static void main(String[] args) {
-        final int n = 6;
-        final int m = 8;
-        final int[] input = { 2, 3, -1, 3, 3, -5, 2, 2 };
-        System.out.println(solve(n, m, input));
+        final int n = (int) Math.pow(2, 10);
+        final int m = 100_000;
+        final int[] input = new int[m];
+        for (int i = 0; i < m; i++) {
+            if (i % 30 == 0 && i != 0) {
+                final int i1 = -new Random().nextInt(i * 30 - ((i - 1) * 30)) - ((i - 1) * 30);
+                input[i] = Math.abs(i1) > 100_000 ? -new Random().nextInt(30) : -i1;
+            } else
+                input[i] = new Random().nextInt(30);
+        }
+
+        final String solve = solve(n, m, input);
+        System.out.println(solve);
     }
 
     private static String solve(int n, int m, int[] input) {
         final Segment[] busyParts = new Segment[m];
         final StringBuilder result = new StringBuilder();
-        //TODO: fix comparator
-        final Comparator<Segment> segmentComparator = (o1, o2) -> {
-            if ((o1.to - o1.from) > (o2.to - o2.from)) {
-                return 1;
-            } else if ((o1.to - o1.from) < (o2.to - o2.from)) {
-                return -1;
-            } else {
-                return o1.from <= o2.from ? -1 : 1;
-            }
-        };
+        final Comparator<Segment> segmentComparator = (o1, o2) -> (o1.to - o1.from) == (o2.to - o2.from) ?
+                -Integer.compare(o1.from, o2.from) :
+                -Integer.compare(o1.to - o1.from, o2.to - o2.from);
         Queue<Segment> freeParts = new PriorityQueue<>(segmentComparator);
         freeParts.add(new Segment(0, n));
         for (int i = 0, inputLength = input.length; i < inputLength; i++) {
             final int query = input[i];
             if (query > 0 && freeParts.peek() == null) {
-                result.append(-1).append("\n");
+                result.append(-1).append(" ");
                 continue;
             }
             if (query > 0 && freeParts.peek() != null) {
                 if (freeParts.peek().to - freeParts.peek().from >= query) {
                     final Segment polledSegment = freeParts.poll();
-                    result.append(polledSegment.from + 1).append("\n");
+                    result.append(polledSegment.from + 1).append(" ");
                     busyParts[i] = new Segment(polledSegment.from, polledSegment.from + query);
                     polledSegment.from = polledSegment.from + query;
                     freeParts.add(polledSegment);
-                    continue;
                 } else {
-                    result.append(-1).append("\n");
-                    continue;
+                    result.append(-1).append(" ");
                 }
+                continue;
             }
             if (query < 0) {
                 final int absoluteValue = Math.abs(query) - 1;
@@ -126,11 +128,6 @@ public class MemoryManager {
         public Segment(int from, int to) {
             this.from = from;
             this.to = to;
-        }
-
-        @Override
-        public String toString() {
-            return "Segment{" + "from=" + from + ", to=" + to + '}';
         }
     }
 
