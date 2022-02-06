@@ -3,8 +3,10 @@ package com.company.yuriy.memorymanager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -55,26 +57,34 @@ public class MemoryManager {
     private static long timeSpent = 0;
 
     public static void main(String[] args) {
-        final int n = (int) Math.pow(2, 10);
+        final int n = (int) Math.pow(2, 15);
         final int m = 100_000;
         final int[] input = new int[m];
         int c = 1;
         for (int i = 0; i < m; i++) {
-            if (i % 30 == 0 && i != 0) {
-                final int upepr = c * 30;
-                final int low = (c - 1) * 30;
-                final int i1 = -(new Random().nextInt(upepr - low) + low);
+            int a = 15;
+            if (i % a == 0 && i != 0) {
+                final int upper = c * a;
+                final int low = (c - 1) * a;
+                final int i1 = -(new Random().nextInt(upper - low) + low);
                 input[i] = i1;
                 c++;
             } else
                 input[i] = new Random().nextInt(29) + 1;
         }
-
+//        final int n = 6;
+//        final int m = 8;
+//        final int[] input = {2, 3, -1, 3, 3, -5, 2, 2};
+        long s = System.currentTimeMillis();
         final String solve = solve(n, m, input);
+        System.out.println(solve);
+        final long l = System.currentTimeMillis() - s;
+        System.out.println("Total time spent: " + l);
+        System.out.println("Time spent on removing: " + timeSpent);
     }
 
     private static String solve(int n, int m, int[] input) {
-        final Segment[] busyParts = new Segment[m];
+        final Map<Integer, Segment> busyParts = new HashMap<>();
         final StringBuilder result = new StringBuilder();
         final Comparator<Segment> segmentComparator = (o1, o2) -> (o1.to - o1.from) == (o2.to - o2.from) ?
                 -Integer.compare(o1.from, o2.from) :
@@ -91,37 +101,68 @@ public class MemoryManager {
                 if (freeParts.peek().to - freeParts.peek().from >= query) {
                     final Segment polledSegment = freeParts.poll();
                     result.append(polledSegment.from + 1).append(" ");
-                    busyParts[i] = new Segment(polledSegment.from, polledSegment.from + query);
-                    polledSegment.from = polledSegment.from + query;
-                    freeParts.add(polledSegment);
+                    final Segment value = new Segment(polledSegment.from, polledSegment.from + query);
+                    if (polledSegment.prevSegment != null) {
+                        value.prevSegment = polledSegment.prevSegment;
+                        polledSegment.prevSegment.nextSegment = value;
+                    } else {
+                        final Segment prev = new Segment(polledSegment.from, value.from);
+                        prev.nextSegment = value;
+                        value.prevSegment = value.from == 0 ? null : prev;
+                    }
+                    if (polledSegment.to == value.to) {
+                        value.nextSegment = polledSegment.nextSegment;
+                        if (polledSegment.nextSegment != null) {
+                            polledSegment.nextSegment.prevSegment = value;
+                        }
+                    } else {
+                        final Segment next = new Segment(value.to, polledSegment.to);
+                        next.prevSegment = value;
+                        value.nextSegment = value.to == n ? null : next;
+                    }
+                    value.isBusy = true;
+                    busyParts.put(i, value);
+                    if (value.prevSegment != null && !value.prevSegment.isBusy) {
+                        freeParts.add(value.prevSegment);
+                    }
+                    if (value.nextSegment != null && !value.nextSegment.isBusy) {
+                        freeParts.add(value.nextSegment);
+                    }
                 } else {
                     result.append(-1).append(" ");
                 }
                 continue;
             }
             if (query < 0) {
+                long s = System.currentTimeMillis();
                 final int absoluteValue = Math.abs(query) - 1;
-                if (busyParts[absoluteValue] != null) {
-                    busyParts[absoluteValue] = null;
-                    final List<Segment> segmemts = Arrays.stream(busyParts).filter(Objects::nonNull)
-                            .collect(Collectors.toList());
-                    freeParts = new PriorityQueue<>(segmentComparator);
-                    if (segmemts.isEmpty()) {
+                if (busyParts.containsKey(absoluteValue)) {
+                    final Segment segment = busyParts.get(absoluteValue);
+                    busyParts.remove(absoluteValue);
+                    if (busyParts.isEmpty()) {
                         freeParts.add(new Segment(0, n));
                     } else {
-                        int start = 0;
-                        for (Segment segment : segmemts) {
-                            if (start == segment.from) {
-                                start = segment.to;
-                                continue;
-                            }
-                            freeParts.add(new Segment(start, segment.from));
-                            start = segment.to;
+                        int from = 0, to = n;
+                        Segment prev = null;
+                        Segment next = null;
+                        final Segment e = new Segment(from, to);
+                        if (segment.prevSegment != null) {
+                            prev = segment.prevSegment;
+                            from = prev.isBusy ? segment.from : prev.to;
+                            freeParts.remove(segment.prevSegment);
+                            e.prevSegment = prev.prevSegment;
+                            e.from = from;
                         }
-                        if (start != n) {
-                            freeParts.add(new Segment(start, n));
+                        if (segment.nextSegment != null) {
+                            next = segment.nextSegment;
+                            to = next.isBusy ? next.from : next.to;
+                            freeParts.remove(segment.nextSegment);
+                            e.nextSegment = next.nextSegment;
+                            e.to = to;
                         }
+                        freeParts.add(e);
                     }
+                    timeSpent += (System.currentTimeMillis() - s);
                 }
             }
         }
@@ -130,6 +171,9 @@ public class MemoryManager {
 
     private static class Segment {
         int from, to;
+        Segment nextSegment;
+        Segment prevSegment;
+        boolean isBusy = false;
 
         public Segment(int from, int to) {
             this.from = from;
