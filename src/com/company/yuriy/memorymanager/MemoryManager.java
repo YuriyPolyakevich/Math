@@ -1,18 +1,11 @@
 package com.company.yuriy.memorymanager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * Created by yuriy_polyakevich at 2/6/22
@@ -89,7 +82,7 @@ public class MemoryManager {
         final Comparator<Segment> segmentComparator = (o1, o2) -> (o1.to - o1.from) == (o2.to - o2.from) ?
                 -Integer.compare(o1.from, o2.from) :
                 -Integer.compare(o1.to - o1.from, o2.to - o2.from);
-        Queue<Segment> freeParts = new PriorityQueue<>(segmentComparator);
+        final Queue<Segment> freeParts = new PriorityQueue<>(segmentComparator);
         freeParts.add(new Segment(0, n));
         for (int i = 0, inputLength = input.length; i < inputLength; i++) {
             final int query = input[i];
@@ -98,35 +91,36 @@ public class MemoryManager {
                 continue;
             }
             if (query > 0 && freeParts.peek() != null) {
-                if (freeParts.peek().to - freeParts.peek().from >= query) {
+                final Segment peek = freeParts.peek();
+                if (peek.to - peek.from >= query) {
                     final Segment polledSegment = freeParts.poll();
                     result.append(polledSegment.from + 1).append(" ");
-                    final Segment value = new Segment(polledSegment.from, polledSegment.from + query);
+                    final Segment newBusySegment = new Segment(polledSegment.from, polledSegment.from + query);
                     if (polledSegment.prevSegment != null) {
-                        value.prevSegment = polledSegment.prevSegment;
-                        polledSegment.prevSegment.nextSegment = value;
-                    } else {
-                        final Segment prev = new Segment(polledSegment.from, value.from);
-                        prev.nextSegment = value;
-                        value.prevSegment = value.from == 0 ? null : prev;
+                        newBusySegment.prevSegment = polledSegment.prevSegment;
+                        polledSegment.prevSegment.nextSegment = newBusySegment;
                     }
-                    if (polledSegment.to == value.to) {
-                        value.nextSegment = polledSegment.nextSegment;
+                    if (polledSegment.to == newBusySegment.to) {
+                        newBusySegment.nextSegment = polledSegment.nextSegment;
                         if (polledSegment.nextSegment != null) {
-                            polledSegment.nextSegment.prevSegment = value;
+                            polledSegment.nextSegment.prevSegment = newBusySegment;
                         }
                     } else {
-                        final Segment next = new Segment(value.to, polledSegment.to);
-                        next.prevSegment = value;
-                        value.nextSegment = value.to == n ? null : next;
+                        final Segment next = new Segment(newBusySegment.to, polledSegment.to);
+                        next.prevSegment = newBusySegment;
+                        newBusySegment.nextSegment = next;
+                        if (polledSegment.nextSegment != null) {
+                            next.nextSegment = polledSegment.nextSegment;
+                            polledSegment.nextSegment.prevSegment = next;
+                        }
                     }
-                    value.isBusy = true;
-                    busyParts.put(i, value);
-                    if (value.prevSegment != null && !value.prevSegment.isBusy) {
-                        freeParts.add(value.prevSegment);
+                    newBusySegment.isBusy = true;
+                    busyParts.put(i, newBusySegment);
+                    if (newBusySegment.prevSegment != null && !newBusySegment.prevSegment.isBusy) {
+                        freeParts.add(newBusySegment.prevSegment);
                     }
-                    if (value.nextSegment != null && !value.nextSegment.isBusy) {
-                        freeParts.add(value.nextSegment);
+                    if (newBusySegment.nextSegment != null && !newBusySegment.nextSegment.isBusy) {
+                        freeParts.add(newBusySegment.nextSegment);
                     }
                 } else {
                     result.append(-1).append(" ");
@@ -149,15 +143,14 @@ public class MemoryManager {
                         if (segment.prevSegment != null) {
                             prev = segment.prevSegment;
                             from = prev.isBusy ? segment.from : prev.to;
-                            //TODO: replace removeIf
-                            freeParts.removeIf(se -> se.from == segment.prevSegment.from && se.to == segment.prevSegment.to);
+                            freeParts.remove(segment.prevSegment);
                             e.prevSegment = prev.prevSegment;
                             e.from = from;
                         }
                         if (segment.nextSegment != null) {
                             next = segment.nextSegment;
                             to = next.isBusy ? next.from : next.to;
-                            freeParts.removeIf(se -> se.from == segment.nextSegment.from && se.to == segment.nextSegment.to);
+                            freeParts.remove(segment.nextSegment);
                             e.nextSegment = next.nextSegment;
                             e.to = to;
                         }
