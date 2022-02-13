@@ -2,8 +2,6 @@ package com.company.google;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 /**
  * Created by yuriy_polyakevich at 2/6/22
@@ -28,16 +26,16 @@ import java.util.Queue;
 //starting with the largest squares first. So, following the example above, solution(12) would return [9, 1, 1, 1].
 public class SquareSolution {
 
-    public static void main(String[] args) {
-        solution(10_000);
-    }
-
     public static int[] solution(int area) {
         final List<Integer> answers = new ArrayList<>();
-        int right = (int) Math.sqrt(area);
-        int left = 0;
-        while (left <= right) {
-        }
+        int result = 0;
+        do {
+          result = (int) Math.sqrt(area);
+          if (result > 0) {
+              answers.add(result * result);
+          }
+          area -= (result * result);
+        } while (result != 0);
         return answers.stream().mapToInt(i -> i).toArray();
     }
 
